@@ -32,7 +32,7 @@ const Validation: React.FC = () => {
  
   try {
     setLoading(true);
-     const response = await fetch(`https://api.troque.futfanatics.com.br/api/login`, {
+     const response = await fetch(`https://api.troquefuthomologacao.futfanatics.com.br/api/login`, {
        method: 'POST',
        headers: {
          'Content-Type': 'application/json',

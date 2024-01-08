@@ -117,7 +117,7 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
 
   /** Buscar os motivos na API e validações */
   useEffect(() => {
-    fetch(`https://api.troque.futfanatics.com.br/api/reasons`)
+    fetch(`https://api.troquefuthomologacao.futfanatics.com.br/api/reasons`)
       .then((response) => response.json())
       .then((data) => {
         setReasons(data);

@@ -27,7 +27,7 @@ const CliqueRetire: React.FC<CliqueRetireProps> = ({ className,  selected, onSel
 
   return (
     <>
-      <Box typeBox="envio" className={`col-11 col-md-7 position-relative ${selected ? "selected-box" : ""}`}>
+      <Box typeBox="envio" className={`col-11 col-md-7 position-relative envio-clique ${selected ? "selected-box" : ""}`}>
         <div className="info-clique position-absolute  ">
           <IconInformative width={24} height={24} className="informative">
         </IconInformative>

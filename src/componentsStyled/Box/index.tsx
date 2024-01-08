@@ -149,7 +149,8 @@ export const Box = styled.div<Box>`
     ${props => props.typeBox === 'envio' && `
         margin: 24px 16px 16px 16px;
         padding:40px 40px;
-        height:27rem;
+        width: 300px;
+        height:28rem;
         display:flex;
         flex-direction:column;
         align-items:center;
@@ -173,7 +174,7 @@ export const Box = styled.div<Box>`
             &:hover{
                 .box-information{
                     position:absolute;
-                    right:30px;
+                    right:25px;
                     top:0px;
                     display:block;
                     background:rgba(00, 00 ,00 ,0.4);

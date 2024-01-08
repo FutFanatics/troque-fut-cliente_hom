@@ -348,6 +348,12 @@
   }
 }
 
+@media (max-width: 768px) {
+  .slide-shipping {
+    padding: 0px 0px 0px 32px;
+  }
+}
+
 .slide-follow {
   width: 125%;
 }

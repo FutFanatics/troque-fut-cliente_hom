@@ -20,7 +20,7 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
   onRequestClose,
   novosDadosSelecionados
 }) => {
-
+  /* console.log("e ai bicha", novosDadosSelecionados) */
   const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState(false);
 
@@ -121,10 +121,12 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
         bodyJson['banks'] = banks
       }
 
-
+/*       console.log('Conteúdo do objeto bodyJson:', bodyJson);
+      //@ts-ignore
+      console.log('Conteúdo do objeto bodyJson:', JSON.stringify(bodyJson)); */
       axios
         .post(
-          `https://api.troque.futfanatics.com.br/api/finish-request`, 
+          `https://api.troquefuthomologacao.futfanatics.com.br/api/finish-request`, 
           bodyJson,
           {
             timeout: 10000,
@@ -142,7 +144,7 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
         });
     }
   }
-  
+
   return (
     <Modal
       isOpen={isOpen}

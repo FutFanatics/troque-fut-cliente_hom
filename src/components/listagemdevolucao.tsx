@@ -41,7 +41,7 @@ const ListagemDevolucoes: React.FC = () => {
       const fetchDevolucoes = async () => {
         try {
           const response = await axios.get(
-            `https://api.troque.futfanatics.com.br/api/accompany/${customerId}`,
+            `https://api.troquefuthomologacao.futfanatics.com.br/api/accompany/${customerId}`,
             {
               timeout: 10000,
               headers: {

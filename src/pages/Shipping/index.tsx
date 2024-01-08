@@ -28,6 +28,7 @@ const Shipping: React.FC<ShippingProps> = ({}) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [dadosFinais, setDadosFinais] = useState(location.state || {});
   const [novosDadosSelecionados, setNovosDadosSelecionados] = useState({}); 
+  const [allowed_clique_retire, setAllowed_clique_retire]= useState(dadosFinais[0].allowed_clique_retire);
   const { data } = useDataContext();
 
   const navigate = useNavigate();
@@ -52,14 +53,16 @@ const Shipping: React.FC<ShippingProps> = ({}) => {
   useEffect(() => {
     setDadosFinais(location.state || {});
   }, [location.state]);
-  const cliqueRetireComponent = dadosFinais.allowed_clique_retire ? (
+
+  const cliqueRetireComponent = dadosFinais[0].allowed_clique_retire ? (
     <div className="item d-flex justify-content-center">
-      <CliqueRetire
-        onSelect={handleCliqueRetireSelect}
-        selected={cliqueRetireSelected}
-      />
+  <CliqueRetire
+    onSelect={handleCliqueRetireSelect}
+    selected={cliqueRetireSelected}
+  />
     </div>
-  ) : null;
+  ) : null
+  ;
   const envios = {
     dots: true,
     infinite: false,
@@ -91,7 +94,8 @@ const Shipping: React.FC<ShippingProps> = ({}) => {
   const handleBack = () => {
     navigate("/data", { state: { pedido: dadosFinais || [] } });
   };
-  //console.log("cade", dadosFinais);
+  console.log("cade", dadosFinais);
+  console.log('clique retire', allowed_clique_retire)
   return (
     <>
       <Header></Header>
@@ -152,8 +156,8 @@ const Shipping: React.FC<ShippingProps> = ({}) => {
         <div className="container">
           <SH1>FORMA DE ENVIO</SH1>
           <div className="row justify-content-center">
-            <div className="col-md-10">
-              <Slider {...envios}>
+            <div className="col-md-8">
+              <Slider {...envios} className="slide-shipping">
                 {cliqueRetireComponent}
                 <div className="item d-flex justify-content-center">
                   <Correios

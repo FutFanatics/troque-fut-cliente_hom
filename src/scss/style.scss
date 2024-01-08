@@ -392,6 +392,11 @@
     width: 100% !important;
   }
 }
+.slide-shipping{
+  @include sm{
+    padding: 0px 0px 0px 32px;
+  }
+}
 .slide-follow{
   width: 125%;
 }

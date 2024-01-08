@@ -64,7 +64,7 @@ const ModalCamera: React.FC<ModalCameraProps> = ({
         }
 
         const response = await fetch(
-          `https://api.troque.futfanatics.com.br/api/evidences`,
+          `https://api.troquefuthomologacao.futfanatics.com.br/api/evidences`,
           {
             method: "POST",
             body: formData,

@@ -174,7 +174,7 @@ const ValeEstorno: React.FC<ValeEstornoProps> = ({
     const fetchBanks = async () => {
       try {
         const response = await axios.get(
-          `https://api.troque.futfanatics.com.br/api/banks`,
+          `https://api.troquefuthomologacao.futfanatics.com.br/api/banks`,
           {
             timeout: 10000,
             headers: {
