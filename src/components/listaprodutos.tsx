@@ -5,6 +5,8 @@ import IconNull from "../componentsStyled/icon/iconNull";
 
 import ProductSelected from "./produtoselected";
 import Produtos from "./produtos";
+import ModalAceite from "./modalaceite";
+import ModalTimeout from "./modaltimeout";
 
 interface ListaProdutosProps {
   className?: string;
@@ -41,15 +43,22 @@ const ListaProdutos: React.FC<ListaProdutosProps> = ({
   const [showProductSelected, setShowProductSelected] = useState(false);
   const [produtosSelecionados, setProdutosSelecionados] = useState<Produto[]>([]);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const[modalIsOpen, setOpenmodal]= useState(false)
+
+  const openModal =() =>{ 
+    setOpenmodal(true)
+  }
+  const closeModal =() =>{
+    setOpenmodal(false)
+  }
 
   useEffect(() => {
-
     setProdutosSelecionados([]);
     setIsButtonDisabled(true);
     setProdutoSelecionado(null);
-
+  
     let auth = localStorage.getItem("auth");
-
+  
     if (auth) {
       const authObj = JSON.parse(auth);
       const username = authObj.email;
@@ -57,30 +66,40 @@ const ListaProdutos: React.FC<ListaProdutosProps> = ({
       const text: string = username + ":" + password;
       const encoder: TextEncoder = new TextEncoder();
       const data: Uint8Array = encoder.encode(text);
-
+  
       const dataArray: number[] = Array.from(data);
       const binaryString: string = String.fromCharCode.apply(null, dataArray);
       const basicAuth: string = btoa(binaryString);
-
-      axios
-        .get(
-          `https://api.troquefuthomologacao.futfanatics.com.br/api/order/get/${selectedId}`,
-          {
-            timeout: 10000,
-            headers: {
-              Authorization: "Basic " + basicAuth,
-            },
-          }
-        )
-        .then(function (response) {
-          setPedido(response.data);
-          setDelivery_date(response.data.delivery_date || "");
-          setPayment_method(response.data.payment_method || "");
-          setAllowed_clique_retire(response.data.allowed_clique_retire);
-          setShowProductSelected(false);
-        })
-        .catch(function (error) {
-        });
+  
+      /* let timeoutId; */
+  
+      const fetchData = () => {
+        axios
+          .get(
+            `https://api.troquefuthomologacao.futfanatics.com.br/api/order/get/${selectedId}`,
+            {
+              timeout: 10000,
+              headers: {
+                Authorization: "Basic " + basicAuth,
+              },
+            }
+          )
+          .then(function (response) {
+            setPedido(response.data);
+            setDelivery_date(response.data.delivery_date || "");
+            setPayment_method(response.data.payment_method || "");
+            setAllowed_clique_retire(response.data.allowed_clique_retire);
+            setShowProductSelected(false);
+          })
+          
+          .catch(function (error) {
+            if (error.response && error.response.status === 401) {
+              openModal()
+            } else {            }
+          });
+      };
+  
+      fetchData();
     }
   }, [selectedId]);
 
@@ -178,6 +197,11 @@ const ListaProdutos: React.FC<ListaProdutosProps> = ({
           )}
         </div>
       </section>
+
+      <ModalTimeout
+      isOpen={modalIsOpen}
+      onRequestClose={closeModal}
+      ></ModalTimeout>
     </>
   );
 };

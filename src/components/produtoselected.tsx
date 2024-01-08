@@ -14,6 +14,7 @@ import IconInformative from "../componentsStyled/icon/iconinformative";
 import IconInfoVale from "../componentsStyled/icon/iconinfovale";
 import ModalData from "./modaldata";
 import { useDataContext } from "../context/DataContext";
+import ModalTimeout from "./modaltimeout";
 
 interface ProductSelectedProps {
   className?: string;
@@ -91,7 +92,14 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
   const [isMediaRequiredError, setIsMediaRequiredError] = useState(false);
   const navigate = useNavigate();
   const isFotoAdicaoValida = fotoAdicionada || motivoDevolucao !== "";
-  
+  const[IsOpen, setOpenmodal]= useState(false)
+
+  const abrirModal =() =>{ 
+    setOpenmodal(true)
+  }
+  const fecharModal =() =>{
+    setOpenmodal(false)
+  }
   /** Settings do Slick */
   const settings = {
     dots: true,
@@ -138,7 +146,11 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
 
         setReasonDeadlines(deadlines);
       })
-      .catch((error) => console.error("Error fetching reasons:", error));
+      .catch(function (error) {
+        if (error.response && error.response.status === 401) {
+          abrirModal()
+        } else {            }
+      });
   }, [delivery_date]);
 
   
@@ -778,6 +790,10 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
         onRequestClose={() => setOutOfDateModalIsOpen(false)}
         onClose={() => {}}
       />
+            <ModalTimeout
+      isOpen={modalIsOpen}
+      onRequestClose={() => setOpenmodal(false)}
+      ></ModalTimeout>
     </>
   );
 };

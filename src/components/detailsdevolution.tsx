@@ -17,6 +17,7 @@ import ModalEnvio from "./modalEnvio";
 import ModalEnvioPendente from "./modalEnvioPendente";
 import ModalConcluido from "./modalconcluido";
 import ModalRealizado from "./modalrealizado";
+import ModalTimeout from "./modaltimeout";
 
 interface DetailsDevolutionProps {
   className?: string;
@@ -85,6 +86,12 @@ const DetailsDevolution: React.FC<DetailsDevolutionProps> = ({ className, devolu
   const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
   const [isContentOpen, setIsContentOpen] = useState(!isMobile);
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
+  const[modalIsOpen, setOpenmodal]= useState(false)
+
+  const openModal =() =>{ 
+    setOpenmodal(true)
+  }
+
 
   const settings = {
     dots:true,
@@ -117,7 +124,7 @@ const DetailsDevolution: React.FC<DetailsDevolutionProps> = ({ className, devolu
     const fetchData = async () => {
       if (devolutionId) {
         let auth = localStorage.getItem("auth");
-
+  
         if (auth) {
           const authObj = JSON.parse(auth);
           const username = authObj.email;
@@ -126,12 +133,12 @@ const DetailsDevolution: React.FC<DetailsDevolutionProps> = ({ className, devolu
           const text: string = username + ":" + password;
           const encoder: TextEncoder = new TextEncoder();
           const data: Uint8Array = encoder.encode(text);
-
+  
           const dataArray: number[] = Array.from(data);
-
+  
           const binaryString: string = String.fromCharCode.apply(null, dataArray);
           const basicAuth: string = btoa(binaryString);
-
+  
           try {
             const response = await axios.get(
               `https://api.troquefuthomologacao.futfanatics.com.br/api/accompany/${customerId}/${devolutionId}`,
@@ -142,18 +149,22 @@ const DetailsDevolution: React.FC<DetailsDevolutionProps> = ({ className, devolu
                 },
               }
             );
-
+  
             setData(response.data);
-            
           } catch (error) {
-            
+            if (error.response && error.response.status === 401) {
+              openModal();
+            } else {
+              // Handle other errors if needed
+            }
           }
         }
       }
     };
-
+  
     fetchData();
   }, [devolutionId]);
+  
 
   const handleButtonClick = () => {
     if (data) {
@@ -298,6 +309,10 @@ const DetailsDevolution: React.FC<DetailsDevolutionProps> = ({ className, devolu
           {modalType === "concluido" && <ModalConcluido isOpen={true} onRequestClose={closeModal} />}
         </Box>
       )}
+      <ModalTimeout
+    isOpen={modalIsOpen}
+    onRequestClose={closeModal}
+    ></ModalTimeout>
     </>
   );
 };

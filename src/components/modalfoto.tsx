@@ -7,6 +7,7 @@ import TipoFotos from "./tipofotos";
 import ImageUpload from "./imageupload";
 import Button from "../componentsStyled/Button";
 import Slider from "react-slick";
+import ModalTimeout from "./modaltimeout";
 
 
 
@@ -30,7 +31,14 @@ const ModalCamera: React.FC<ModalCameraProps> = ({
   const produto = dadosSelecionados.produto;
   const produtoSelecionadoData = dadosSelecionados.produtoSelecionadoData;
   const [isLoading, setIsLoading] = useState(false); 
+  const[modalIsOpen, setOpenmodal]= useState(false)
 
+  const openModal =() =>{ 
+    setOpenmodal(true)
+  }
+  const closeModal =() =>{
+    setOpenmodal(false)
+  }
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const handleImageUpload = (file: File, index: number) => {
     const updatedImages = [...uploadedImages];
@@ -42,27 +50,27 @@ const ModalCamera: React.FC<ModalCameraProps> = ({
 
   const handleUploadButtonClick = async () => {
     setIsLoading(true);
-
+  
     try {
       const auth = localStorage.getItem("auth");
-
+  
       if (auth && uploadedImages.length > 0) {
         const authObj = JSON.parse(auth);
         const username = authObj.email;
         const password = authObj.token;
         const basicAuth = btoa(`${username}:${password}`);
-
+  
         const formData = new FormData();
-
+  
         for (let index = 0; index < uploadedImages.length; index++) {
           const file = uploadedImages[index];
-
+  
           formData.append(
             `evidences[${dadosSelecionados.produtoSelecionadoData.selectedId}-${dadosSelecionados.produto.product_id}][${index}]`,
             file
           );
         }
-
+  
         const response = await fetch(
           `https://api.troquefuthomologacao.futfanatics.com.br/api/evidences`,
           {
@@ -73,29 +81,36 @@ const ModalCamera: React.FC<ModalCameraProps> = ({
             },
           }
         );
-
+  
         if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+          if (response.status === 401) {
+            openModal(); // Open modal on 401 error
+          } else {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
         }
-
-
+  
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
           const data = await response.json();
         } else {
           console.log("Response is not JSON:", await response.text());
         }
-
+  
         onPhotoUploadComplete();
         onRequestClose();
       }
     } catch (error) {
-      console.error("Error:", error);
-    }finally {
-      setIsLoading(false); 
+      if (error.response && error.response.status === 401) {
+        openModal();
+      } else {
+        // Handle other errors if needed
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
-
+  
   const settings = {
     dots: true,
     infinite: false,
@@ -114,6 +129,7 @@ const ModalCamera: React.FC<ModalCameraProps> = ({
   };
 
   return (
+  <>
     <Modal
     isOpen={isOpen && dadosSelecionados && dadosSelecionados.produto && dadosSelecionados.produto.product_id}
     onRequestClose={onRequestClose}
@@ -175,6 +191,11 @@ const ModalCamera: React.FC<ModalCameraProps> = ({
 
       <button onClick={onRequestClose} className="btn-close"></button>
     </Modal>
+    <ModalTimeout
+    isOpen={modalIsOpen}
+    onRequestClose={closeModal}
+    ></ModalTimeout>
+    </>
   );
 };
 

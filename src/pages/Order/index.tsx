@@ -14,6 +14,7 @@ import IconBack from "../../componentsStyled/icon/Iconback";
 import ModalNotProduct from "../../components/modalnotproduct";
 import DevBottom from "../../componentsStyled/icon/devbottom";
 import DevTop from "../../componentsStyled/icon/devtop";
+import ModalTimeout from "../../components/modaltimeout";
 
 interface Pedido {
   id: string;
@@ -24,7 +25,15 @@ export default function Order() {
   const [data, setData] = useState<Pedido[]>([]);
   const [selectedId, setSelectedId] = useState("");
   const [showModal, setShowModal] = useState(false);
-  
+  const[modalIsOpen, setOpenmodal]= useState(false)
+
+  const openModal =() =>{ 
+    setOpenmodal(true)
+  }
+  const closeModal =() =>{
+    setOpenmodal(false)
+  }
+
 
   useEffect(() => {
     let auth = localStorage.getItem("auth");
@@ -67,7 +76,9 @@ export default function Order() {
           }
         })
         .catch(function (error) {
-      
+          if (error.response && error.response.status === 401) {
+            openModal()
+          } else {            }
         });
     }
   }, []);
@@ -180,6 +191,10 @@ export default function Order() {
         
       </section>
       <Footer></Footer>
+      <ModalTimeout
+      isOpen={modalIsOpen}
+      onRequestClose={closeModal}
+      ></ModalTimeout>
     </>
   );
 }

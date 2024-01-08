@@ -6,6 +6,7 @@ import SlidesProducts from "./slidesproducts";
 import { useLocation, useNavigate  } from "react-router-dom";
 import axios from "axios";
 import Button from "../componentsStyled/Button";
+import ModalTimeout from "./modaltimeout";
 
 
 interface ModalAceiteProps {
@@ -106,7 +107,7 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
       let bodyJson = {
           email : username,
           orderId: orderId,
-          store: 311840,
+          store: 642719,
           products: products,
           shipment_method: novosDadosSelecionados.Shipping,
           acceptTerms: true,
@@ -140,12 +141,23 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
           navigate(`/follow`, { state: { devolutionId } });
         })
         .catch(function (error) {
-          console.log(error, "Erro ao obter dados do pedido");
+          if (error.response && error.response.status === 401) {
+            openModal()
+          } else {            }
         });
     }
   }
+  const[modalIsOpen, setOpenmodal]= useState(false)
+
+  const openModal =() =>{ 
+    setOpenmodal(true)
+  }
+  const closeModal =() =>{
+    setOpenmodal(false)
+  }
 
   return (
+    <>
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
@@ -327,6 +339,11 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
         Concluir pedido de Devolução
       </button>
     </Modal>
+    <ModalTimeout
+    isOpen={modalIsOpen}
+    onRequestClose={closeModal}
+    ></ModalTimeout>
+    </>
   );
 };
 

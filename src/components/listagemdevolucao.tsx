@@ -9,6 +9,7 @@ import IconSearch from "../componentsStyled/icon/iconsearch";
 import IconNull from "../componentsStyled/icon/iconNull";
 import { useMediaQuery } from "react-responsive";
 import Slider from "react-slick";
+import ModalTimeout from "./modaltimeout";
 type Devolution = {
   id: string;
   imgs: { url: string }[];
@@ -25,19 +26,19 @@ const ListagemDevolucoes: React.FC = () => {
     let auth = localStorage.getItem("auth");
     if (auth) {
       const authObj = JSON.parse(auth);
-
+  
       const username = authObj.email;
       const password = authObj.token;
       const text: string = username + ":" + password;
       const encoder: TextEncoder = new TextEncoder();
       const data: Uint8Array = encoder.encode(text);
-
+  
       const customerId = authObj.customerId;
       const dataArray: number[] = Array.from(data);
-
+  
       const binaryString: string = String.fromCharCode.apply(null, dataArray);
       const basicAuth: string = btoa(binaryString);
-
+  
       const fetchDevolucoes = async () => {
         try {
           const response = await axios.get(
@@ -58,12 +59,17 @@ const ListagemDevolucoes: React.FC = () => {
             setDevolucoes(fetchedDevolucoes);
           }
         } catch (error) {
-          console.error("Error fetching data:", error);
+          if (error.response && error.response.status === 401) {
+            openModal();
+          } else {
+            // Handle other errors if needed
+          }
         }
       };
       fetchDevolucoes();
     }
   }, [selectedDate, currentDate]);
+  
 
   const handleSearch = () => {
     const filteredDevolucoes = devolucoes.filter((devolucao) => {
@@ -84,7 +90,16 @@ const ListagemDevolucoes: React.FC = () => {
     slidesToShow: 2,
     slidesToScroll: 1,
   };
+  const[modalIsOpen, setOpenmodal]= useState(false)
+
+  const openModal =() =>{ 
+    setOpenmodal(true)
+  }
+  const closeModal =() =>{
+    setOpenmodal(false)
+  }
   return (
+    <>
     <div>
       <div className="d-flex justify-content-center mt-3 align-items-center box-date flex-column flex-md-row">
         <SH1 typeTitle="acompanhe">Selecione um período:</SH1>
@@ -158,6 +173,11 @@ const ListagemDevolucoes: React.FC = () => {
         </div>
       )}
     </div>
+    <ModalTimeout
+    isOpen={modalIsOpen}
+    onRequestClose={closeModal}
+    ></ModalTimeout>
+    </>
   );
 };
 

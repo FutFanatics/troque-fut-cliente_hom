@@ -128,6 +128,9 @@ const SButton = styled.button<SButtonProps>`
             background:#192C53;
             color:#fff;
         }
+        &.welcome{
+            width:180px;
+        }
     `}
     ${props => props.typeButton === 'select-estorno' && `
             border:none;
