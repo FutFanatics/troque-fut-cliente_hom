@@ -21,20 +21,21 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
   onRequestClose,
   novosDadosSelecionados
 }) => {
-  console.log("e ai bicha", novosDadosSelecionados)
   const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsChecked(event.target.checked);
+
   };
-
   const handleConfirmar = async () => {
-
+    setIsLoading(true)
     let auth = localStorage.getItem("auth");
 
     if (auth) {
-
+     
       const authObj = JSON.parse(auth);
       const username = authObj.email;
       const password = authObj.token;
@@ -126,10 +127,11 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
       if(banks.hasOwnProperty('agency')) {
         bodyJson['banks'] = banks
       }
-
+      
      console.log('Conteúdo do objeto bodyJson:', bodyJson);
       //@ts-ignore
       console.log('Conteúdo do objeto bodyJson:', JSON.stringify(bodyJson)); 
+      
       axios
         .post(
           `https://api.troquefuthomologacao.futfanatics.com.br/api/finish-request`, 
@@ -141,7 +143,9 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
             },
           }
         )
+        
         .then(function (response) {
+          
           const devolutionId = response.data.return_id;
           navigate(`/follow`, { state: { devolutionId } });
         })
@@ -149,6 +153,9 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
           if (error.response && error.response.status === 401) {
             openModal()
           } else {            }
+        })
+        .finally(() => {
+          setIsLoading(true);
         });
     }
   }
@@ -336,13 +343,28 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
       </div>
 
       <button onClick={onRequestClose} className="btn-close"></button>
-
-      <button 
-      onClick={handleConfirmar}
-      className="button-finish"
-      disabled={!isChecked}>
-        Concluir pedido de Devolução
-      </button>
+      {isLoading ? (
+          <div className="position-relative">
+            <button
+              onClick={handleConfirmar}
+              className="button-finish"
+              disabled={!isChecked}
+            >
+              Concluir pedido de Devolução
+            </button>
+            <div className="spinner-foto spinner-foto_aceite" />
+          </div>
+          
+        ) : (
+          <button
+            onClick={handleConfirmar}
+            className="button-finish"
+            disabled={!isChecked}
+          >
+            Concluir pedido de Devolução
+          </button>
+        )}    
+      
     </Modal>
     <ModalTimeout
     isOpen={modalIsOpen}

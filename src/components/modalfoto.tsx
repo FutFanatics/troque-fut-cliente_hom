@@ -100,7 +100,8 @@ const ModalCamera: React.FC<ModalCameraProps> = ({
         onPhotoUploadComplete();
         onRequestClose();
       }
-    } catch (error) {
+    } 
+    catch (error) {
       if (error.response && error.response.status === 401) {
         openModal();
       } else {
