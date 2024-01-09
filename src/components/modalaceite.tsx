@@ -21,7 +21,7 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
   onRequestClose,
   novosDadosSelecionados
 }) => {
-  /* console.log("e ai bicha", novosDadosSelecionados) */
+  console.log("e ai bicha", novosDadosSelecionados)
   const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState(false);
 
@@ -73,14 +73,19 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
       
             orderId = item.selectedId;
       
-            if (item.hasOwnProperty('BankReembolso') && item.BankReembolso.bankData.account) {
-              banks = item.BankReembolso.bankData;
+            if (item.hasOwnProperty('BankReembolso') && item.BankReembolso.bankData.accont != "") {
+              console.log("mostra o banco", item.BankReembolso.bankData)
+              banks ={
+                number: item.BankReembolso.bankData.accont,
+                agency: item.BankReembolso.bankData.agency,
+                bank: item.BankReembolso.bankData.bank,
+                cpfcnpj: item.BankReembolso.bankData.cpfcnpj,
+                banks_type: item.BankReembolso.bankData.typebank
+              } 
             }
       
             if (item.hasOwnProperty('BankReembolso') && item.BankReembolso.pixData != null) {
               let type;
-      
-              
               switch (item.BankReembolso.pixData.tipoPix) {
                 case "Celular":
                   type = "number";
@@ -118,13 +123,13 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
         bodyJson['pix'] = pix
       }
 
-      if(banks.hasOwnProperty('account')) {
+      if(banks.hasOwnProperty('agency')) {
         bodyJson['banks'] = banks
       }
 
-/*       console.log('Conteúdo do objeto bodyJson:', bodyJson);
+     console.log('Conteúdo do objeto bodyJson:', bodyJson);
       //@ts-ignore
-      console.log('Conteúdo do objeto bodyJson:', JSON.stringify(bodyJson)); */
+      console.log('Conteúdo do objeto bodyJson:', JSON.stringify(bodyJson)); 
       axios
         .post(
           `https://api.troquefuthomologacao.futfanatics.com.br/api/finish-request`, 
