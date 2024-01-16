@@ -93,6 +93,9 @@ const ValeEstorno: React.FC<ValeEstornoProps> = ({
   const handleTipoPixChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedTipoPix = event.target.value;
     updateTipoPix(selectedTipoPix);
+    const tipoPix = event.target.value;
+    setTipoPix(tipoPix);
+    setChavePix('')
   };
 
 
@@ -101,6 +104,7 @@ const ValeEstorno: React.FC<ValeEstornoProps> = ({
     setCheckboxMarcado(checked);
     onCheckboxChange(event);
   };
+
   //console.log('mostra o tipo', tipoPix)
 
   const renderInputField = () => {
@@ -115,7 +119,7 @@ const ValeEstorno: React.FC<ValeEstornoProps> = ({
               setChavePix(e.target.value);
               updateChavePix(e.target.value); 
             }}
-            maxLength={14}
+            maxLength={11}
           />
         );
       case "CPF ou CNPJ":
@@ -128,7 +132,7 @@ const ValeEstorno: React.FC<ValeEstornoProps> = ({
               setChavePix(e.target.value);
               updateChavePix(e.target.value); 
             }}
-            maxLength={18}
+            maxLength={14}
           />
         );
       case "Chave Aleatória":
@@ -141,6 +145,7 @@ const ValeEstorno: React.FC<ValeEstornoProps> = ({
               setChavePix(e.target.value);
               updateChavePix(e.target.value); 
             }}
+            maxLength={32}
           />
         );
       case "E-mail":
@@ -153,6 +158,7 @@ const ValeEstorno: React.FC<ValeEstornoProps> = ({
               setChavePix(e.target.value);
               updateChavePix(e.target.value); 
             }}
+            maxLength={256}
           />
         );
       default:
@@ -165,6 +171,7 @@ const ValeEstorno: React.FC<ValeEstornoProps> = ({
               setChavePix(e.target.value);
               updateChavePix(e.target.value); 
             }}
+            maxLength={256}
           />
         );
     }
@@ -184,7 +191,7 @@ const ValeEstorno: React.FC<ValeEstornoProps> = ({
         );
         setData(response.data);
       } catch (error) {
-        console.error("Error fetching banks:", error);
+        //console.error("Error fetching banks:", error);
       }
     };
 
@@ -238,7 +245,7 @@ const ValeEstorno: React.FC<ValeEstornoProps> = ({
               <label>Tipo de Pix</label>
               <select className="w-100" onChange={handleTipoPixChange}>
                 <option value='' hidden>Selecione o tipo</option>
-                <option >Celular</option>
+                <option>Celular</option>
                 <option>CPF ou CNPJ</option>
                 <option>Chave Aleatória</option>
                 <option>E-mail</option>
@@ -269,12 +276,13 @@ const ValeEstorno: React.FC<ValeEstornoProps> = ({
                 <label>CPF ou CNPJ</label>
                 <input
                   type="text"
-                  placeholder="Ex: 000.000.000-00"
+                  placeholder="Insira CPF ou CNPJ"
                   value={cpfcnpj}
                   onChange={(e) => {
                     setCpfcnpj(e.target.value);
                     updateCpfcnpj(e.target.value); 
                   }}
+                  maxLength={14}
                 />
               </Box>
             </div>
@@ -282,12 +290,13 @@ const ValeEstorno: React.FC<ValeEstornoProps> = ({
               <Box typeBox="login" margin="5px 0px 16px 0px" className="col-md-6">
                 <label>Agência</label>
                 <input type="text" 
-                placeholder="000-00" 
+                placeholder="0000-0" 
                 value={agency}
                 onChange={(e) => {
                   setAgency(e.target.value);
                   updateAgency(e.target.value); 
                 }}
+                maxLength={5}
                 />
               </Box>
               <Box typeBox="login" margin="5px 0px 16px 0px" className="col-md-6">
@@ -299,6 +308,7 @@ const ValeEstorno: React.FC<ValeEstornoProps> = ({
                   setAccont(e.target.value);
                   updateAccont(e.target.value); 
                 }}
+                maxLength={11}
                 />
               </Box>
             </div>
