@@ -14,12 +14,14 @@ interface OutOfDateModalProps {
   children?: React.ReactNode;
   onRequestClose?: () => void;
   onClose: () => void; // Add this line to the interface
+  daysAllowed: number | null;
 }
 
 const OutOfDateModal: React.FC<OutOfDateModalProps> = ({
   isOpen,
   onRequestClose,
   onClose, 
+  daysAllowed
 }) => {
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose} className="c-modal_devolution flex-column"
@@ -35,7 +37,7 @@ const OutOfDateModal: React.FC<OutOfDateModalProps> = ({
 
         <STextParagraph typeParagraph="paragraphdescribe">
         Infelizmente não poderemos prosseguir com a sua solicitação de devolução.
-O prazo de devolução dos produtos dessa categoria é de 30 dias.
+O prazo de devolução dos produtos dessa categoria é de {daysAllowed} dias.
         </STextParagraph>
       </div>
 

@@ -6,6 +6,7 @@ export interface Produto {
   variant_value?: string;
   price?: number;
   img?: string;
+  is_personalized?:boolean;
   url?: string;
   quantity?: number;
   shipment_date?:string;

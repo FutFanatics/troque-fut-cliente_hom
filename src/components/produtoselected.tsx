@@ -93,6 +93,7 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
   const navigate = useNavigate();
   const isFotoAdicaoValida = fotoAdicionada || motivoDevolucao !== "";
   const[IsOpen, setOpenmodal]= useState(false)
+  const [selectedReasonDaysAllowed, setSelectedReasonDaysAllowed] = useState<number | null>(null);
 
   const abrirModal =() =>{ 
     setOpenmodal(true)
@@ -153,7 +154,7 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
       });
   }, [delivery_date]);
 
-  
+
 
   // useEffect(() => {
   //   produtos.forEach((produto) => {
@@ -181,6 +182,7 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
     }
 
     if (selectedReason) {
+      setSelectedReasonDaysAllowed(selectedReason.days_allowed);
       const deadlineDate = new Date(reasonDeadlines[motivoDevolucao]);
       const currentDate = new Date();
 
@@ -243,7 +245,7 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
         });
       }
     }      
-    
+
   }, [motivoDevolucao, produtoSelecionadoData, reasons, reasonDeadlines, outOfDateModalIsOpen, produtos]);
 
   /** Colocar os dados selecionados dentro do state */
@@ -789,6 +791,7 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
         isOpen={outOfDateModalIsOpen}
         onRequestClose={() => setOutOfDateModalIsOpen(false)}
         onClose={() => {}}
+        daysAllowed={selectedReasonDaysAllowed} 
       />
             <ModalTimeout
       isOpen={modalIsOpen}
