@@ -408,6 +408,7 @@
 
   @include sm{
     padding: 32px 0px;
+    width: 85%;
   }
 }
 .col-vale {
@@ -839,5 +840,17 @@ input[type="text"] {
     left: 40%;
     transform: translateX(-50%);
     margin: 16px 0px;
+  }
+}
+
+.slick-next{
+  @include sm{
+    right: 0px !important
+
+  }
+};
+.slick-prev{
+  @include sm{
+    left: 0px!important;
   }
 }

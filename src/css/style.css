@@ -367,6 +367,7 @@
 @media (max-width: 768px) {
   .c-slider-product {
     padding: 32px 0px;
+    width: 85%;
   }
 }
 
@@ -821,6 +822,18 @@ input[type=text] {
   left: 40%;
   transform: translateX(-50%);
   margin: 16px 0px;
+}
+
+@media (max-width: 768px) {
+  .slick-next {
+    right: 0px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .slick-prev {
+    left: 0px !important;
+  }
 }
 
 /*# sourceMappingURL=style.css.map */

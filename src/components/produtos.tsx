@@ -28,7 +28,7 @@ const Produtos: React.FC<ProdutosProps> = ({
   delivery_date,
   payment_method,
   orderId,
-  selectedId: propSelectedId, // Rename the prop to avoid conflict
+  selectedId: propSelectedId,
   allowed_clique_retire,
   handleSelect
 }) => {
@@ -121,7 +121,7 @@ const Produtos: React.FC<ProdutosProps> = ({
         breakpoint: 480,
         settings: {
           slidesToShow: 1,
-          arrows: false,
+          arrows: true,
         },
       },
     ],
