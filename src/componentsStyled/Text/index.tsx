@@ -150,6 +150,10 @@ export const SH1 =styled.h1<SH1Props>`
         font-size:14px;
         text-align:start;
         font-weight:400;
+
+        &.danger{
+            color: red
+        }
     `}
     ${props => props.typeParagraph === 'pedido' && `
         text-align:start;

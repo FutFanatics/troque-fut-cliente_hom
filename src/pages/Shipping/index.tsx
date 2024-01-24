@@ -92,7 +92,11 @@ const Shipping: React.FC<ShippingProps> = ({}) => {
   };
 
   const handleBack = () => {
-    navigate("/data", { state: { pedido: dadosFinais || [] } });
+      if(dadosFinais[0].selectedProduct.tipoReembolso){
+        navigate("/data",{ state: { pedido: dadosFinais || [] } })
+      }else{
+        navigate("/order", { state: { pedido: dadosFinais || [] } });
+      }
   };
   console.log("cade", dadosFinais);
   console.log('clique retire', allowed_clique_retire)

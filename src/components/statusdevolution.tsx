@@ -135,6 +135,8 @@ const getBorderColor = (status: string): string => {
       return "#192c53";
     case "denied":
       return "red";
+    case "pending":
+      return "#192c53";
     default:
       return "#00000080";
   }
@@ -146,6 +148,8 @@ const getIconColor = (status: string): string => {
       return "white";
     case "denied":
       return "white";
+      case "pending":
+      return "#192c53";
     default:
       return "#1C1B1F80";
   }

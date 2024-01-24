@@ -94,6 +94,8 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
   const isFotoAdicaoValida = fotoAdicionada || motivoDevolucao !== "";
   const[IsOpen, setOpenmodal]= useState(false)
   const [selectedReasonDaysAllowed, setSelectedReasonDaysAllowed] = useState<number | null>(null);
+  const [isMotivoDevolucaoValid, setIsMotivoDevolucaoValid] = useState(true);
+
 
   const abrirModal =() =>{ 
     setOpenmodal(true)
@@ -177,17 +179,23 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
       (reason) => reason.description === motivoDevolucao
     );
 
-    if (selectedReason && outOfDateModalIsOpen) {
+    if (selectedReason && outOfDateModalIsOpen === true) {
       setMotivoDevolucao("");
+
     }
 
     if (selectedReason) {
       setSelectedReasonDaysAllowed(selectedReason.days_allowed);
       const deadlineDate = new Date(reasonDeadlines[motivoDevolucao]);
       const currentDate = new Date();
+      setIsMotivoDevolucaoValid(true)
 
       if (currentDate > deadlineDate) {
+        setMotivoDevolucao("");
         setOutOfDateModalIsOpen(true);
+        setIsMotivoDevolucaoValid(false)
+
+        return
       }
 
       if (selectedReason.media_required === 1) {
@@ -198,20 +206,14 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
         setIsMediaRequiredError(false);
       }
 
-      //console.log('lastProductSelected:', lastProductSelected);
-      //console.log('produtos2:', produtos);
-
       let partes = lastProductSelected.split('-');
-
-      // Atribuir os valores às variáveis
       let codProd = partes[0];
       let codVariant = partes.slice(1).join('-')
-      
-      if (selectedReason && selectedReason.subReasons) {
 
+      if (selectedReason && selectedReason.subReasons) {
         const produto = produtos.filter((produto) => {
-          if(produto.variant_value === codVariant) {
-            if(produto.product_id === codProd) {
+          if (produto.variant_value === codVariant) {
+            if (produto.product_id === codProd) {
               return true;
             }
           }
@@ -219,33 +221,26 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
         });
 
         const productIdVariantValue = `${produto[0].product_id}-${produto[0].variant_value}`;
-    
+
         if (motivoDevolucao && productIdVariantValue) {
-          // Update subReasons using the combination of product_id and variant_value as the key
           setSubReasons((prevSubReasons) => ({
             ...prevSubReasons,
             [productIdVariantValue]: selectedReason.subReasons,
           }));
-
-          //console.log('subReasons 1:', subReasons);
         }
       } else {
-        // If there are no subReasons, clear the options for each product
         produtos.forEach((produto) => {
           const productIdVariantValue = `${produto.product_id}-${produto.variant_value}`;
-    
+
           if (productIdVariantValue) {
             setSubReasons((prevSubReasons) => ({
               ...prevSubReasons,
               [productIdVariantValue]: [],
             }));
-
-            //console.log('subReasons 2:', subReasons);
           }
         });
       }
-    }      
-
+    }
   }, [motivoDevolucao, produtoSelecionadoData, reasons, reasonDeadlines, outOfDateModalIsOpen, produtos]);
 
   /** Colocar os dados selecionados dentro do state */
@@ -266,25 +261,70 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
 
   /** Validar se todos os campos obrigatórios foram preenchidos */
   const areAllFieldsFilled = () => {
-    return produtos.every((produto) => {
-      const data =
-        produtoData[produto.product_id]?.[produto.variant_value] || {};
+    let isValid = true;
+    let errorMessage = '';
+  
+    produtos.every((produto) => {
+      const data = produtoData[produto.product_id]?.[produto.variant_value] || {};
       const selectedReason = reasons.find(
         (reason) => reason.description === data.motivoDevolucao
       );
   
-      return (
-        data.tipoReembolso &&
-        data.motivoDevolucao &&
-        data.quantidade &&
-        data.subDevolucao &&
-        data.obsDev !== "" &&
-        (!selectedReason ||
-          selectedReason.media_required !== 1 ||
-          data.fotoAdicionada)
-      );
+      const isWithinDeadline = () => {
+        if (selectedReason) {
+          const deadlineDate = new Date(reasonDeadlines[data.motivoDevolucao]);
+          const currentDate = new Date();
+          return currentDate <= deadlineDate;
+        }
+        return true;
+      };
+  
+      if (!isWithinDeadline()) {
+        data.motivoDevolucao = "";
+        data.subDevolucao = "";
+      }
+  
+      let isFieldValid = false;
+  
+      if (produto.is_personalized === true) {
+        isFieldValid = (
+          data.quantidade &&
+          data.subDevolucao &&
+          data.obsDev !== "" &&
+          data.fotoAdicionada &&
+          isWithinDeadline()
+        );
+      } else {
+        isFieldValid = (
+          data.tipoReembolso &&
+          data.quantidade &&
+          data.motivoDevolucao &&
+          data.subDevolucao &&
+          data.obsDev !== "" &&
+          (!selectedReason ||
+            selectedReason.media_required !== 1 ||
+            data.fotoAdicionada) &&
+          isWithinDeadline()
+        );
+      }
+  
+      if (!isFieldValid) {
+        isValid = false;
+        errorMessage = "Por favor, preencha todos os campos corretamente e selecione um motivo válido.";
+      }
+  
+      return isFieldValid; // Continue iterando apenas se o campo atual for válido
     });
+  
+    if (!isValid) {
+      // Exibir a mensagem de erro aqui (por exemplo, com console.log)
+      console.log(errorMessage);
+    }
+  
+    return isValid;
   };
+  
+
 
   const updateProdutoData = (
     productId,
@@ -306,7 +346,7 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
       },
     }));
   };
-
+console.log('dados selecionados', data)
   /********************** ATAAAACKKK ******************** */
 
   /** Renderizar a foto ao selecionar a evidência */
@@ -471,53 +511,48 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
 
   /** Enviar para o próxima página */
   const handleConfirmar = () => {
-    ////console.log('Inside handleConfirmar');
-    
     const dadosSelecionadosAtualizados = produtos.map((produto) => {
       const dadosProduto = produtoData[produto.product_id] || {};
+      
       return {
         ...dadosSelecionados,
         ...produtoSelecionadoData,
         ...produto,
       };
     });
-  
-    ////console.log("Dados selecionados produto:", dadosSelecionadosAtualizados);
-  
     const todosCamposPreenchidos = areAllFieldsFilled();
-    const isMediaRequiredFilled = isFotoAdicaoValida ; // Alteração aqui
-  
-    //console.log('Todos os campos preenchidos?', todosCamposPreenchidos);
-    //console.log('É necessário enviar mídia?', mediaRequired);
-    //console.log('É válido adicionar foto?', isMediaRequiredFilled);
-  
-    if (todosCamposPreenchidos && isMediaRequiredFilled) {
-      if (onDataUpdate) {
-        onDataUpdate(dadosSelecionadosAtualizados);
-      }
-  
-      setIsBotaoConfirmarHabilitado(true);
-  
+    const isMediaRequiredFilled = isFotoAdicaoValida;
+    console.log('dadosSelecionadosAtualizados',dadosSelecionadosAtualizados)
+    if (todosCamposPreenchidos) {
       if (payment_method.toLowerCase() === "cartão") {
         navigate("/shipping", {
           state: dadosSelecionadosAtualizados,
         });
-      } else if (tipoReembolso.toLowerCase() === "estorno") {
+      }       
+      else if (tipoReembolso.toLowerCase() === "estorno") {
         setIsModalOpen(true);
         setDadosSelecionados(dadosSelecionadosAtualizados);
-      } else {
+      } 
+      else if (tipoReembolso.toLowerCase() === "cupom") {
         navigate("/data", {
           state: dadosSelecionadosAtualizados,
         });
-        setIsModalOpen(true);
         setDadosSelecionados(dadosSelecionadosAtualizados);
-      }
+      } 
+      else {
+          navigate("/shipping", {
+            state: dadosSelecionadosAtualizados,
+          });
+          setIsModalOpen(true);
+          setDadosSelecionados(dadosSelecionadosAtualizados);
+        }
     } else {
       console.error("Preencha todos os campos antes de confirmar");
       setIsBotaoConfirmarHabilitado(false);
       setIsMediaRequiredError(!isMediaRequiredFilled);
     }
   };
+  
 //console.log('socuerro', motivoSelecionado)
   return (
     <>
@@ -562,15 +597,80 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
                 </div>
               </Box>
               <Box className="col-md-8" margin="0px" padding="0px" key={produto.product_id && produto.variant_value}>
-                <div className="d-md-flex justify-content-between">
-                  <div className="d-flex flex-column justify-content-center content-select">
-                    <Box typeBox="informative">
+                <div className="d-md-flex justify-content-between flex-wrap">
+                  <div className="d-flex flex-column justify-content-center content-select position-relative mb-2">
+                    <STextParagraph typeParagraph="select" className={!isMotivoDevolucaoValid ? 'danger': ''}>
+                      *Por que quer devolver?
+                    </STextParagraph>
+                    <ListaSelected
+                    isMotivoDevolucaoValid={isMotivoDevolucaoValid}
+                      options={reasons.map((reason) => reason.description)}
+                      onChange={(selectedValue) =>
+                        handleSelectChange(
+                          produto.product_id,
+                          produto.variant_value,
+                          "motivoDevolucao",
+                          selectedValue
+                        )
+                      }
+                      selectedValue={
+                        produtoData[produto.product_id]?.[produto.variant_value]
+                          ?.motivoDevolucao
+                      }
+                    ></ListaSelected>
+                    {!isMotivoDevolucaoValid && (
+                      <p
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "0px",
+                          marginBottom:"0px",
+                          position:"absolute",
+                          bottom:"-5px"
+                        }}
+                      >
+                        *Selecione um motivo válido
+                      </p>
+                    )}
+                  </div>
+                  <div className="d-flex flex-column justify-content-center content-select mb-2">
+                    <STextParagraph typeParagraph="select">
+                      *O que aconteceu?
+                    </STextParagraph>
+
+                    <ListaSelected
+                        isMotivoDevolucaoValid={true}
+                        options={subReasons[`${produto.product_id}-${produto.variant_value}`]?.map((subReason) => subReason.description) || []}
+                        optionsSubReason={subReasons[`${produto.product_id}-${produto.variant_value}`]?.map((subReason) => ({
+                          id: subReason.id,
+                          name: subReason.description,
+                        })) || []}
+                        onChange={(selectedValue) =>
+                          handleSelectChange(
+                            produto.product_id,
+                            produto.variant_value,
+                            "subDevolucao",
+                            selectedValue
+                          )
+                        }
+                        selectedValue={
+                          produtoData[produto.product_id]?.[produto.variant_value]?.subDevolucao
+                        }
+                      />
+
+
+                  </div>
+                  {produto.is_personalized ?(
+                    <div className="d-none"></div>
+                  ):(
+                    <div className="d-flex flex-column justify-content-center content-select ">
+                    <Box typeBox="informative" >
                       <IconInformative
                         width={24}
                         height={24}
                         className="informative"
                       ></IconInformative>
-                      <div className="box-informative">
+                      <div className="box-informative" style={{zIndex:999}}>
                         <IconInfoVale width={48}></IconInfoVale>
                         <h1>
                           Diferença entre
@@ -594,6 +694,7 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
                       *Tipo de Reembolso
                     </STextParagraph>
                     <ListaSelected
+                    isMotivoDevolucaoValid={true}
                       options={["Cupom", "Estorno"]}
                       onChange={(selectedValue) =>
                         handleSelectChange(
@@ -609,11 +710,13 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
                       }
                     ></ListaSelected>
                   </div>
-                  <div className="d-flex flex-column justify-content-center content-select">
+                  )}
+                  <div className="d-flex flex-column justify-content-center content-select ">
                     <STextParagraph typeParagraph="select">
                       *Quantidade
                     </STextParagraph>
                     <ListaSelected
+                    isMotivoDevolucaoValid={true}
                       options={Array.from(
                         { length: produto.quantity },
                         (_, i) => i + 1
@@ -634,52 +737,7 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
                   </div>
                 </div>
                 <div className="d-md-flex justify-content-between">
-                  <div className="d-flex flex-column justify-content-center content-select">
-                    <STextParagraph typeParagraph="select">
-                      *Por que quer devolver?
-                    </STextParagraph>
-                    <ListaSelected
-                      options={reasons.map((reason) => reason.description)}
-                      onChange={(selectedValue) =>
-                        handleSelectChange(
-                          produto.product_id,
-                          produto.variant_value,
-                          "motivoDevolucao",
-                          selectedValue
-                        )
-                      }
-                      selectedValue={
-                        produtoData[produto.product_id]?.[produto.variant_value]
-                          ?.motivoDevolucao
-                      }
-                    ></ListaSelected>
-                  </div>
-                  <div className="d-flex flex-column justify-content-center content-select">
-                    <STextParagraph typeParagraph="select">
-                      *O que aconteceu?
-                    </STextParagraph>
-
-                    <ListaSelected
-                        options={subReasons[`${produto.product_id}-${produto.variant_value}`]?.map((subReason) => subReason.description) || []}
-                        optionsSubReason={subReasons[`${produto.product_id}-${produto.variant_value}`]?.map((subReason) => ({
-                          id: subReason.id,
-                          name: subReason.description,
-                        })) || []}
-                        onChange={(selectedValue) =>
-                          handleSelectChange(
-                            produto.product_id,
-                            produto.variant_value,
-                            "subDevolucao",
-                            selectedValue
-                          )
-                        }
-                        selectedValue={
-                          produtoData[produto.product_id]?.[produto.variant_value]?.subDevolucao
-                        }
-                      />
-
-
-                  </div>
+                  
                 </div>
                 <div className="d-md-flex justify-content-between">
                   <div className="d-flex flex-column justify-content-center content-select">
@@ -711,7 +769,6 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
                       className="d-flex flex-column justify-content-center"
                       margin="12px 0px 0px 0px"
                     >
-                      {" "}
                       <div className="d-flex align-items-center">
                         <a
                           onClick={() =>
@@ -727,7 +784,7 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
                         </STextParagraph>
                       </div>
                       
-                      {mediaRequired && !fotoAdicionada && produtoData[produto.product_id]?.[produto.variant_value]?.motivoDevolucao && (
+                      {mediaRequired && !fotoAdicionada && produtoData[produto.product_id]?.[produto.variant_value]?.motivoDevolucao || produto.is_personalized && !fotoAdicionada? (
                         <p
                           style={{
                             color: "#000",
@@ -738,7 +795,7 @@ const [keySelecionada, setKeySelecionada] = useState<string>("");
                         >
                           *O envio de fotos é obrigatório
                         </p>
-                      )}
+                      ):(<div></div>)}
 
                     </Box>
                   </div>

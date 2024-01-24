@@ -66,7 +66,7 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
             products.push({
               prodId: item.product_id,
               variantId: item.variant_id,
-              method_refund: item.selectedProduct.tipoReembolso,
+              method_refund: item.is_personalized ? 'Corrigir' : item.selectedProduct.tipoReembolso,
               reasonSubId: item.selectedProduct.subDevolucao,
               qty: item.selectedProduct.quantidade,
               obs: item.selectedProduct.obsDev,
@@ -75,7 +75,7 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
             orderId = item.selectedId;
       
             if (item.hasOwnProperty('BankReembolso') && item.BankReembolso.bankData.accont != "") {
-              console.log("mostra o banco", item.BankReembolso.bankData)
+              //console.log("mostra o banco", item.BankReembolso.bankData)
               banks ={
                 number: item.BankReembolso.bankData.accont,
                 agency: item.BankReembolso.bankData.agency,

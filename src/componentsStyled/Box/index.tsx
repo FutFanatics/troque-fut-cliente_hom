@@ -253,7 +253,7 @@ export const Box = styled.div<Box>`
                 .box-informative{
                     position:absolute;
                     right:10px;
-                    top:0px;
+                    top:-50px;
                     display:flex;
                     flex-direction:column;
                     align-items:center;

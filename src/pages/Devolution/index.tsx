@@ -1,3 +1,4 @@
+import Ordering from "../../components/Ordering";
 import DatePicker from "../../components/datepicker";
 import Footer from "../../components/footer";
 import Header from "../../components/header";
@@ -48,6 +49,7 @@ export default function Devolution() {
           <IconHelp width={30}/>
         </Box>
         <div className="container">
+          
           <ListagemDevolucoes></ListagemDevolucoes>  
         </div>
         </section>

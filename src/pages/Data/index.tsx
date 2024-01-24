@@ -49,7 +49,7 @@ const Data: React.FC<DataProps> = ({ onDataUpdate }) => {
   const [areAllCheckboxesChecked, setAreAllCheckboxesChecked] =
     useState<boolean>(false);
     const [checkboxStates, setCheckboxStates] = useState<{ [key: string]: boolean }>({});
-
+    
   
   const updateTipoPix = (tipoPixValue: string | null) => {
     setTipoPix(tipoPixValue);

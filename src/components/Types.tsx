@@ -2,11 +2,11 @@ export interface Produto {
   selectedId?:number | string;
   product_id?: number | string; 
   key?:string;
+  is_personalized?:boolean;
   name?: string;
   variant_value?: string;
   price?: number;
   img?: string;
-  is_personalized?:boolean;
   url?: string;
   quantity?: number;
   shipment_date?:string;

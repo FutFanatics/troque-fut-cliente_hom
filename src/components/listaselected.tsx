@@ -4,7 +4,9 @@ interface ListaSelectedProps<T> {
     onChange: (selectedValue: T) => void;
     selectedValue?: T;
     quantityNumber?: number;
+    className?:string;
     delivery_date?: string;
+    isMotivoDevolucaoValid?: boolean; 
   }
 
   function ListaSelected<T extends string | number>({
@@ -12,7 +14,9 @@ interface ListaSelectedProps<T> {
     optionsSubReason,
     onChange,
     selectedValue,
+    className,
     quantityNumber = 0,
+    isMotivoDevolucaoValid,
   }: ListaSelectedProps<T>) {
     let quantities = [];
   
@@ -47,7 +51,7 @@ interface ListaSelectedProps<T> {
       <select
         onChange={(e) => onChange(e.target.value as T)}
         value={selectedValue}
-        className="list-select"
+        className={`list-select ${!isMotivoDevolucaoValid ? 'danger' : ''}`}
       >
         
           <option value="" hidden>

@@ -358,7 +358,9 @@
   color: #192c53;
   padding-bottom: 4px;
   margin-bottom: 12px;
- 
+ &.danger{
+  border-bottom: 1px solid red;
+ }
 }
 .c-produto {
   margin-bottom: 64px;

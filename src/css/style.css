@@ -313,6 +313,9 @@
   padding-bottom: 4px;
   margin-bottom: 12px;
 }
+.list-select.danger {
+  border-bottom: 1px solid red;
+}
 
 .c-produto {
   margin-bottom: 64px;
