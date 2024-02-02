@@ -12,15 +12,24 @@ interface CliqueRetireProps {
   className?: string;
   onSelect: () => void;
   selected: boolean;
+  dadosFinais?:any;
 
 }
-const CliqueRetire: React.FC<CliqueRetireProps> = ({ className,  selected, onSelect }) => {
+const CliqueRetire: React.FC<CliqueRetireProps> = ({ className,  selected, onSelect, dadosFinais }) => {
   const [buttonClicked, setButtonClicked] = useState(false);
   const [buttonText, setButtonText] = useState("Selecionar");
-
+  const [modalIsOpen, setModalIsOpen] = useState(false);
  
+  const openModal = () => {
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
 
   const handleButtonClick = () => {
+    openModal()
     onSelect();
     setButtonText("Selecionado");
   };
@@ -56,6 +65,12 @@ const CliqueRetire: React.FC<CliqueRetireProps> = ({ className,  selected, onSel
           {buttonText}
         </Button>
       </Box>
+      <ModalClique
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          dadosFinais={dadosFinais}
+      >
+        </ModalClique>
     </>
   );
 };

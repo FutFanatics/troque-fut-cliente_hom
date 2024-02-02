@@ -59,6 +59,7 @@ const Shipping: React.FC<ShippingProps> = ({}) => {
   <CliqueRetire
     onSelect={handleCliqueRetireSelect}
     selected={cliqueRetireSelected}
+    dadosFinais={dadosFinais}
   />
     </div>
   ) : null

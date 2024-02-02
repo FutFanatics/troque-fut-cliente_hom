@@ -397,7 +397,34 @@ export const Box = styled.div<Box>`
             width: 100%;
             text-overflow: ellipsis;
             white-space: nowrap;
-            overflow: hidden;
+            position:relative;
+
+            .c-tooltip{
+                display:none;
+            }
+
+            &:hover{
+                .c-tooltip{
+                    display:flex;
+                    align-items:center;
+                    position:absolute;
+                    background:#222222;
+                    width:auto;
+                    padding:4px 8px;
+                    border-radius:2px;
+                    top:-40%;
+                    left:20px;
+                    z-index:99;
+                    height:auto;
+                    
+                    .tooltiptext{
+                        color:white;
+                        font-weight:350;
+                        font-family:'gotham';
+                        font-size:10px;
+                    }
+                }
+            }
         }
 
 

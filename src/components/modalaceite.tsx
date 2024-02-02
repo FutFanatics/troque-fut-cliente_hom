@@ -21,6 +21,7 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
   onRequestClose,
   novosDadosSelecionados
 }) => {
+  console.log('brabo', novosDadosSelecionados)
   const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -73,7 +74,7 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
             });
       
             orderId = item.selectedId;
-      
+            
             if (item.hasOwnProperty('BankReembolso') && item.BankReembolso.bankData.accont != "") {
               //console.log("mostra o banco", item.BankReembolso.bankData)
               banks ={
@@ -110,16 +111,28 @@ const ModalAceite: React.FC<ModalAceiteProps> = ({
         });
       }
       
-      let bodyJson = {
-          email : username,
-          orderId: orderId,
-          store: 642719,
-          products: products,
-          shipment_method: novosDadosSelecionados.Shipping,
-          acceptTerms: true,
-          acceptLgpd: true,
+      let bodyJson: {
+        email: any;
+        orderId: {};
+        store: number;
+        products: any[];
+        shipment_method: any;
+        acceptTerms: boolean;
+        acceptLgpd: boolean;
+        locker?: any;
+      } = {
+        email: username,
+        orderId: orderId,
+        store: 642719,
+        products: products,
+        shipment_method: novosDadosSelecionados.Shipping,
+        acceptTerms: true,
+        acceptLgpd: true,
       };
-
+      if (novosDadosSelecionados.Shipping === "Clique Retire") {
+       
+        bodyJson.locker = novosDadosSelecionados.locker;
+      }
       if(pix.hasOwnProperty('code') && pix.code !== "") {
         bodyJson['pix'] = pix
       }

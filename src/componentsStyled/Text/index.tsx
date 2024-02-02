@@ -62,7 +62,6 @@ export const SH1 =styled.h1<SH1Props>`
     `}
     ${props => props.typeTitle === 'title-product' && `
         color:#192c53;
-
         @media screen and (max-width: 768px) {
            font-size:16px
         }

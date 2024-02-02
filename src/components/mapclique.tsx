@@ -1,6 +1,31 @@
+import { useEffect, useState } from "react";
 import React from 'react';
 
-const MapClique: React.FC = () => {
+interface MapCliqueProps{
+  updatelocker:(locker:string)=> void;
+}
+
+const MapClique: React.FC<MapCliqueProps> = ({
+  updatelocker,
+}) => {
+  const [locker, setLocker] = useState<any>(null);
+
+  useEffect(() => {
+    const handleMessage = (e) => {
+      if (e.data.length > 0) {
+        const parsedLocker = JSON.parse(e.data);
+        setLocker(parsedLocker.orderNo);
+        updatelocker(locker)
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
+
   return (
     <div className="container mt-4">
       <iframe
@@ -13,6 +38,7 @@ const MapClique: React.FC = () => {
       ></iframe>
     </div>
   );
+
 };
 
 export default MapClique;

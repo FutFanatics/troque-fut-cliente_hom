@@ -146,23 +146,26 @@ const Produtos: React.FC<ProdutosProps> = ({
                 <div className="produto-box_img ">
                   <img src={produto.img} alt={produto.name} />
                 </div>
-                <div className="produto-box_text d-flex flex-column justify-content-center">
+                <div className="produto-box_text">
                   <SH1
-                    typeTitle="title-product"
-                    fontSize="16px"
-                    textAlign="start"
-                    fontWeight={600}
-                    margin="8px 0px 8px 0px"
-                    color="#1D1B20"
-                    style={{
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
-                    {produto.name}
-                  </SH1>
+                      typeTitle="title-product"
+                      fontSize="16px"
+                      textAlign="start"
+                      fontWeight={600}
+                      margin="8px 0px 8px 0px"
+                      color="#1D1B20"
+                      style={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
 
+                      }}
+                    >
+                      {produto.name}
+                    </SH1>
+                <div className = "c-tooltip"><span className="tooltiptext">{produto.name}</span></div>
+                </div>
+                <div className="produto-box_text d-flex flex-column justify-content-center">
                   <SspanText typeSpan="namProduct">
                     Código:
                     <SspanText typeSpan="namProduct">{produto.product_id}</SspanText>
